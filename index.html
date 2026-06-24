@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMA GEO | Diagnóstico SEV</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700;800&family=Syne:wght@700;800&display=swap');
+
+  :root {
+    --navy:    #19282F;
+    --navy-dk: #0f1e24;
+    --orange:  #F16C03;
+    --teal:    #02A0A1;
+    --teal2:   #017d7e;
+    --offwhite:#F4F8F9;
+    --light:   #E0EEF0;
+    --gray:    #8898A8;
+    --white:   #ffffff;
+    --purple:  #a78bfa;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: var(--offwhite);
+    color: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 4px solid var(--orange);
+    position: sticky; top:0; z-index:10;
+  }
+  .logo-mark {
+    width:44px; height:44px;
+    background: var(--teal);
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Syne',sans-serif;
+    font-size:15px; font-weight:800; color:white;
+    flex-shrink:0;
+  }
+  .logo-name  { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:white; letter-spacing:.05em; }
+  .logo-sub   { font-size:10px; color:var(--teal); letter-spacing:.12em; text-transform:uppercase; margin-top:1px; }
+
+  /* ── MAIN ── */
+  main { max-width:820px; margin:0 auto; padding:32px 20px 60px; flex:1; }
+
+  /* ── INTRO HERO ── */
+  .intro {
+    background: var(--navy);
+    border-radius:16px; padding:30px 32px;
+    margin-bottom:28px; color:white;
+    position:relative; overflow:hidden;
+  }
+  .intro::before {
+    content:''; position:absolute; top:-50px; right:-50px;
+    width:200px; height:200px; border-radius:50%;
+    background:var(--teal); opacity:.07;
+  }
+  .intro-tag {
+    display:inline-block; background:var(--orange); color:white;
+    font-size:11px; font-weight:700; padding:3px 11px;
+    border-radius:20px; letter-spacing:.08em; margin-bottom:12px;
+  }
+  .intro h2 { font-family:'Playfair Display',Georgia,serif; font-size:1.45rem; font-weight:700; margin-bottom:8px; letter-spacing:.01em; }
+  .intro p   { color:#b0c8cc; font-size:.93rem; line-height:1.65; }
+  .intro-wa {
+    display:inline-flex; align-items:center; gap:8px;
+    margin-top:18px; padding:11px 20px;
+    border-radius:10px; border:1.5px solid rgba(255,255,255,0.15);
+    background:transparent; color:var(--gray);
+    font-family:'Inter',sans-serif; font-size:13px;
+    text-decoration:none; cursor:pointer;
+    transition:all .2s;
+  }
+  .intro-wa:hover { border-color:#25D366; color:#25D366; }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    height:4px; background:var(--light);
+    border-radius:4px; margin-bottom:24px; overflow:hidden;
+  }
+  .progress-fill {
+    height:100%;
+    background:linear-gradient(90deg, var(--teal), var(--orange));
+    border-radius:4px; transition:width .4s ease;
+  }
+
+  /* ── STEP CARD ── */
+  .step {
+    background:white; border-radius:14px;
+    padding:26px 28px; margin-bottom:0;
+    border:2px solid transparent;
+    box-shadow:0 2px 12px rgba(13,40,47,.07);
+    transition:border-color .3s;
+  }
+  .step.active { border-color:var(--teal); }
+  .step-label  { font-size:11px; font-weight:700; color:var(--teal); letter-spacing:.1em; margin-bottom:6px; }
+  .step h3     { font-family:'Playfair Display',Georgia,serif; font-size:1.15rem; font-weight:700; margin-bottom:18px; letter-spacing:.01em; }
+
+  /* ── SECTOR GRID (cat-btn estilo referencia) ── */
+  .cat-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .cat-btn {
+    padding:16px 10px; border:2px solid var(--light);
+    border-radius:12px; background:var(--offwhite);
+    cursor:pointer; text-align:center; transition:all .2s;
+    font-size:.86rem; font-weight:600; color:var(--navy);
+    font-family:'Inter',sans-serif;
+  }
+  .cat-btn .icon { font-size:1.7rem; display:block; margin-bottom:6px; }
+  .cat-btn:hover { border-color:var(--teal); background:var(--light); }
+  .cat-btn.selected { border-color:var(--orange); background:#fff5ec; color:var(--orange); }
+
+  /* ── NECESIDAD (chip estilo bot nuevo) ── */
+  .chips { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+  .chip {
+    background:var(--offwhite); border:2px solid var(--light);
+    border-radius:10px; padding:14px 16px;
+    cursor:pointer; transition:all .2s;
+    display:flex; align-items:center; gap:12px;
+    text-align:left; width:100%;
+    color:var(--navy); font-family:'Inter',sans-serif;
+    font-size:.9rem; font-weight:500; line-height:1.35;
+    position:relative;
+  }
+  .chip:hover { border-color:var(--teal); background:var(--light); }
+  .chip.selected { border-color:var(--orange); background:#fff5ec; font-weight:700; }
+  .chip.selected::after {
+    content:'✓'; position:absolute; right:16px;
+    color:var(--orange); font-weight:700; font-size:14px;
+  }
+  .chip-icon { font-size:1.1rem; flex-shrink:0; }
+
+  /* ── AVISO AMARILLO ── */
+  .hint-box {
+    display:flex; gap:10px; align-items:flex-start;
+    background:#fff8f0; border:1.5px solid #f7c98a;
+    border-radius:10px; padding:12px 16px; margin-bottom:14px;
+    font-size:.84rem; color:#7a4a10; line-height:1.55;
+  }
+  .hint-box .hint-icon { font-size:1.1rem; flex-shrink:0; }
+
+  /* ── ETAPA OPCIONES ── */
+  .stage-grid { display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+  .stage-btn {
+    background:var(--offwhite); border:2px solid var(--light);
+    border-radius:10px; padding:14px 18px;
+    cursor:pointer; transition:all .2s;
+    display:flex; align-items:flex-start; gap:13px;
+    text-align:left; width:100%; font-family:'Inter',sans-serif;
+    font-size:.9rem; color:var(--navy);
+  }
+  .stage-btn:hover { border-color:var(--teal); background:var(--light); }
+  .stage-btn-icon { font-size:1.2rem; flex-shrink:0; margin-top:1px; }
+  .stage-btn-label { font-weight:600; color:var(--navy); display:block; margin-bottom:2px; }
+  .stage-btn-desc  { font-size:.8rem; color:var(--gray); }
+
+  /* ── RESULTADO ── */
+  .solution-card {
+    background:var(--navy); border-radius:16px;
+    padding:28px 28px; color:white;
+    border-left:5px solid var(--teal);
+    margin-bottom:16px;
+  }
+  .sol-sector-row {
+    display:flex; align-items:center; gap:12px; margin-bottom:4px;
+  }
+  .sol-sector-icon { font-size:1.6rem; }
+  .sol-sector-name { font-family:'Playfair Display',Georgia,serif; font-size:1.1rem; font-weight:700; }
+  .sol-stage-badge {
+    margin-left:auto; flex-shrink:0;
+    background:rgba(2,160,161,.18); border:1px solid rgba(2,160,161,.35);
+    border-radius:20px; padding:3px 12px;
+    font-size:11px; color:var(--teal); font-weight:600;
+  }
+  .sol-stage-note {
+    font-size:.82rem; color:#7ecece; margin-bottom:20px; line-height:1.5;
+    padding-top:6px; border-top:1px solid rgba(255,255,255,.06); margin-top:10px;
+  }
+
+  /* bloques por necesidad (acordeón) */
+  .need-block {
+    border-radius:10px; overflow:hidden;
+    border:1px solid rgba(255,255,255,.08);
+    margin-bottom:10px;
+  }
+  .need-block-header {
+    padding:12px 16px; display:flex; align-items:center; gap:10px;
+    cursor:pointer; transition:background .2s; user-select:none;
+  }
+  .need-block-header:hover { background:rgba(255,255,255,.04); }
+  .need-block-title { font-size:.88rem; font-weight:600; color:white; flex:1; line-height:1.35; }
+  .svc-badge {
+    font-size:10px; font-weight:700; letter-spacing:.07em;
+    text-transform:uppercase; padding:3px 9px;
+    border-radius:20px; flex-shrink:0; border:1px solid;
+  }
+  .svc-sev    { background:rgba(2,160,161,.15);   border-color:rgba(2,160,161,.4);   color:#5dd8d8; }
+  .svc-geo    { background:rgba(167,139,250,.15);  border-color:rgba(167,139,250,.4); color:#c4b0fd; }
+  .chevron { font-size:10px; color:var(--gray); transition:transform .2s; flex-shrink:0; }
+  .need-block.open .chevron { transform:rotate(180deg); }
+  .need-block-body {
+    display:none; padding:0 16px 14px;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .need-block.open .need-block-body { display:block; }
+  .need-que {
+    font-size:.88rem; color:#ddeef0; line-height:1.65;
+    padding-top:12px; margin-bottom:10px;
+  }
+  .need-etapa {
+    background:rgba(2,160,161,.08);
+    border-left:3px solid var(--teal);
+    border-radius:0 8px 8px 0;
+    padding:9px 13px; margin-bottom:10px;
+    font-size:.8rem; color:#7ecece; line-height:1.55;
+  }
+  .need-etapa strong { display:block; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--teal); margin-bottom:2px; }
+  .need-beneficio {
+    background:rgba(255,255,255,.04); border-radius:8px;
+    padding:9px 13px; font-size:.8rem; color:#a3c4c4; line-height:1.6;
+  }
+  .need-beneficio strong { color:var(--teal); }
+
+  /* entregables */
+  .entregables {
+    margin-top:18px; background:rgba(241,108,3,.12);
+    border-radius:10px; padding:14px 16px;
+  }
+  .entregables h4 {
+    color:var(--orange); font-size:.78rem; letter-spacing:.08em;
+    font-weight:700; margin-bottom:10px; text-transform:uppercase;
+  }
+  .ent-list { display:flex; flex-wrap:wrap; gap:8px; }
+  .ent-tag {
+    background:rgba(241,108,3,.18); color:#ffd9b0;
+    font-size:.76rem; font-weight:600;
+    padding:4px 12px; border-radius:20px;
+  }
+
+  /* ¿Por qué ADMA GEO? */
+  .adma-card {
+    background:white; border-radius:14px;
+    border:2px solid var(--light); overflow:hidden;
+    box-shadow:0 2px 12px rgba(13,40,47,.07);
+    margin-bottom:16px;
+  }
+  .adma-card-header {
+    background:var(--navy); padding:14px 18px;
+    display:flex; align-items:center; gap:10px;
+    border-bottom:3px solid var(--orange);
+  }
+  .adma-card-title { font-family:'Playfair Display',Georgia,serif; font-size:.95rem; font-weight:700; color:white; letter-spacing:.01em; }
+  .adma-pillars {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:0;
+  }
+  .adma-pillar {
+    padding:14px 16px;
+    border-right:1px solid var(--light);
+    border-bottom:1px solid var(--light);
+  }
+  .adma-pillar:nth-child(even) { border-right:none; }
+  .adma-pillar:nth-last-child(-n+2) { border-bottom:none; }
+  .adma-pillar-icon { font-size:1.3rem; margin-bottom:5px; }
+  .adma-pillar-label { font-size:.84rem; font-weight:700; color:var(--navy); margin-bottom:2px; }
+  .adma-pillar-desc  { font-size:.76rem; color:var(--gray); line-height:1.45; }
+
+  /* ── CTA ── */
+  .cta-section { display:flex; flex-direction:column; gap:10px; }
+  .cta-primary {
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background:var(--orange); color:white; border:none; border-radius:12px;
+    padding:16px 28px; font-family:'Inter',sans-serif;
+    font-size:1rem; font-weight:700; cursor:pointer; text-decoration:none;
+    box-shadow:0 4px 18px rgba(241,108,3,.35); transition:all .2s;
+  }
+  .cta-primary:hover { transform:translateY(-2px); box-shadow:0 8px 26px rgba(241,108,3,.45); }
+  .cta-note { text-align:center; font-size:.78rem; color:var(--gray); margin-top:-4px; }
+  .back-btn {
+    background:transparent; color:var(--gray);
+    border:1.5px solid var(--light); border-radius:10px;
+    padding:11px 18px; font-family:'Inter',sans-serif;
+    font-size:.84rem; cursor:pointer; width:100%;
+    transition:all .2s; text-align:center;
+  }
+  .back-btn:hover { border-color:var(--gray); color:var(--navy); }
+  .restart-btn {
+    background:transparent; border:none;
+    color:var(--gray); font-size:.82rem;
+    cursor:pointer; text-decoration:underline;
+    text-align:center; width:100%; margin-top:4px;
+  }
+  .restart-btn:hover { color:var(--navy); }
+
+  /* ── BOTONES CONTINUAR ── */
+  .continue-row { display:flex; gap:9px; align-items:stretch; }
+  .btn-continue {
+    flex:2; background:var(--teal); color:white; border:none;
+    border-radius:10px; padding:13px 20px;
+    font-family:'Inter',sans-serif; font-size:.9rem; font-weight:600;
+    cursor:pointer; transition:background .2s;
+  }
+  .btn-continue:hover { background:var(--teal2); }
+  .btn-back-inline {
+    flex:1; background:transparent; color:var(--gray);
+    border:1.5px solid var(--light); border-radius:10px;
+    padding:13px 16px; font-family:'Inter',sans-serif;
+    font-size:.84rem; cursor:pointer; transition:all .2s;
+  }
+  .btn-back-inline:hover { border-color:var(--gray); color:var(--navy); }
+
+  /* ── HIDDEN / ANIM ── */
+  .hidden { display:none !important; }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .fade-in { animation:fadeUp .35s ease; }
+
+  footer {
+    text-align:center; padding:22px;
+    color:var(--gray); font-size:.8rem;
+    border-top:1px solid var(--light);
+    background:white;
+  }
+  footer span { color:var(--teal); font-weight:600; }
+
+  @media(max-width:520px){
+    header { padding:14px 18px; }
+    main   { padding:22px 14px 50px; }
+    .intro { padding:22px 20px; }
+    .cat-grid { grid-template-columns:repeat(2,1fr); }
+    .adma-pillars { grid-template-columns:1fr; }
+    .adma-pillar { border-right:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">AG</div>
+  <div>
+    <div class="logo-name">ADMA GEO | Soluciones Geológicas</div>
+    <div class="logo-sub">Sondeos Eléctricos Verticales · San Luis Potosí, SLP</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <div class="intro" id="heroSection">
+    <span class="intro-tag">DIAGNÓSTICO SEV GRATUITO</span>
+    <h2>¿Tu proyecto necesita conocer el subsuelo?</h2>
+    <p>Cuéntanos tu situación en 3 pasos. Te mostramos si un <strong>Sondeo Eléctrico Vertical (SEV)</strong> puede darte la información del subsuelo que necesitas — sin compromiso.</p>
+    <a class="intro-wa" id="waDirecto" href="https://wa.me/524501150638?text=Hola%20ADMA%20GEO%2C%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20sus%20servicios%20de%20SEV." target="_blank">
+      💬 Hablar directamente con un especialista
+    </a>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:5%"></div>
+  </div>
+
+  <!-- ══ PASO 1: SECTOR ══ -->
+  <div class="step active fade-in" id="step1">
+    <div class="step-label">PASO 1 DE 3</div>
+    <h3>¿En qué sector opera tu proyecto?</h3>
+    <div class="cat-grid" id="catGrid">
+      <button class="cat-btn" onclick="selectSector('agua')" id="cat-agua">
+        <span class="icon">💧</span>Agua y Recursos Hídricos
+      </button>
+      <button class="cat-btn" onclick="selectSector('mineria')" id="cat-mineria">
+        <span class="icon">⛏️</span>Minería
+      </button>
+      <button class="cat-btn" onclick="selectSector('civil')" id="cat-civil">
+        <span class="icon">🏗️</span>Obra Civil y Geotecnia
+      </button>
+      <button class="cat-btn" onclick="selectSector('ambiental')" id="cat-ambiental">
+        <span class="icon">🌿</span>Ambiental
+      </button>
+      <button class="cat-btn" onclick="selectSector('energia')" id="cat-energia">
+        <span class="icon">⚡</span>Energía e Industria
+      </button>
+      <button class="cat-btn" onclick="selectSector('agro')" id="cat-agro">
+        <span class="icon">🌾</span>Agropecuario / Municipal
+      </button>
+    </div>
+    <div class="hint-box">
+      <span class="hint-icon">💡</span>
+      <span><strong>¿No encuentras exactamente tu caso?</strong> Selecciona la opción más cercana — en el último paso podrás describir tu situación completa.</span>
+    </div>
+  </div>
+
+  <!-- ══ PASO 2: NECESIDAD ══ -->
+  <div class="step hidden" id="step2">
+    <div class="step-label">PASO 2 DE 3</div>
+    <h3 id="step2Title">¿Qué necesitas resolver?</h3>
+    <div class="chips" id="chipsContainer"></div>
+    <div class="hint-box">
+      <span class="hint-icon">💡</span>
+      <span><strong>¿Ninguna opción describe exactamente tu problema?</strong> Elige la más cercana — en la cotización podrás detallarlo con tus propias palabras.</span>
+    </div>
+    <div class="continue-row">
+      <button class="btn-back-inline" onclick="goBack(1)">← Regresar</button>
+      <button class="btn-continue hidden" id="btnContinue" onclick="goToStep3()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ══ PASO 3: ETAPA ══ -->
+  <div class="step hidden" id="step3">
+    <div class="step-label">PASO 3 DE 3</div>
+    <h3>¿En qué etapa está tu proyecto?</h3>
+    <div class="stage-grid">
+      <button class="stage-btn" onclick="selectStage('exploracion')">
+        <span class="stage-btn-icon">🔍</span>
+        <div><span class="stage-btn-label">Exploración inicial</span><span class="stage-btn-desc">Evaluando si el proyecto es viable antes de invertir</span></div>
+      </button>
+      <button class="stage-btn" onclick="selectStage('diseno')">
+        <span class="stage-btn-icon">📐</span>
+        <div><span class="stage-btn-label">Diseño / Ingeniería</span><span class="stage-btn-desc">Necesitamos datos técnicos para tomar decisiones</span></div>
+      </button>
+      <button class="stage-btn" onclick="selectStage('construccion')">
+        <span class="stage-btn-icon">🏗️</span>
+        <div><span class="stage-btn-label">Construcción o ejecución</span><span class="stage-btn-desc">El proyecto ya comenzó y surgió una necesidad</span></div>
+      </button>
+      <button class="stage-btn" onclick="selectStage('regulatorio')">
+        <span class="stage-btn-icon">📋</span>
+        <div><span class="stage-btn-label">Cumplimiento regulatorio</span><span class="stage-btn-desc">Necesitamos datos para permiso, licencia o estudio oficial</span></div>
+      </button>
+    </div>
+    <button class="back-btn" onclick="goBack(2)">← Regresar</button>
+  </div>
+
+  <!-- ══ RESULTADO ══ -->
+  <div class="solution-card hidden fade-in" id="solutionCard">
+    <div class="sol-sector-row">
+      <span class="sol-sector-icon" id="solIcon"></span>
+      <span class="sol-sector-name" id="solSectorName"></span>
+      <span class="sol-stage-badge" id="solStageBadge"></span>
+    </div>
+    <div class="sol-stage-note" id="solStageNote">
+      Toca cada necesidad para ver el detalle de la solución y cómo aplica en tu etapa.
+    </div>
+    <div id="needBlocks"></div>
+    <div class="entregables">
+      <h4>📄 Entregables del estudio SEV</h4>
+      <div class="ent-list">
+        <span class="ent-tag">Modelo geoléctrico interpretado</span>
+        <span class="ent-tag">Sección litológica inferida</span>
+        <span class="ent-tag">Curvas de resistividad</span>
+        <span class="ent-tag">Recomendaciones técnicas</span>
+        <span class="ent-tag">Informe ejecutivo formal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ¿Por qué ADMA GEO? -->
+  <div class="adma-card hidden" id="admaCard">
+    <div class="adma-card-header">
+      <span style="font-size:1.2rem;">🏢</span>
+      <span class="adma-card-title">¿Por qué ADMA GEO?</span>
+    </div>
+    <div class="adma-pillars">
+      <div class="adma-pillar">
+        <div class="adma-pillar-icon">📡</div>
+        <div class="adma-pillar-label">8 años en SEV</div>
+        <div class="adma-pillar-desc">Especialistas en Sondeos Eléctricos Verticales, configuración Schlumberger</div>
+      </div>
+      <div class="adma-pillar">
+        <div class="adma-pillar-icon">🪨</div>
+        <div class="adma-pillar-label">Geología aplicada</div>
+        <div class="adma-pillar-desc">Conocimiento estructural, geohidrológico y minero que da contexto a los datos</div>
+      </div>
+      <div class="adma-pillar">
+        <div class="adma-pillar-icon">⚡</div>
+        <div class="adma-pillar-label">Perfil geoeléctrico</div>
+        <div class="adma-pillar-desc">Medición de resistividades del subsuelo para estudios de tierra eléctrica y caracterización geofísica</div>
+      </div>
+      <div class="adma-pillar">
+        <div class="adma-pillar-icon">📄</div>
+        <div class="adma-pillar-label">Informe técnico formal</div>
+        <div class="adma-pillar-desc">No solo datos crudos — interpretación completa lista para uso ante dependencias</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA RESULTADO -->
+  <div class="cta-section hidden" id="ctaSection">
+    <a id="whatsappBtn" href="#" target="_blank" class="cta-primary">
+      💬 Solicitar cotización por WhatsApp
+    </a>
+    <div class="cta-note">Respuesta en menos de 24 horas · Sin compromiso</div>
+    <button class="back-btn" onclick="goBack(3)">← Cambiar etapa</button>
+    <button class="restart-btn" onclick="resetAll()">← Iniciar nuevo diagnóstico</button>
+  </div>
+
+</main>
+
+<footer>
+  <span>ADMA GEO | Soluciones Geológicas</span> · Ing. Geóloga ADMA L. Silahua<br>
+  📍 San Luis Potosí, SLP · México &nbsp;|&nbsp; 📱 +52 450 115 0638 &nbsp;|&nbsp; ✉ geosil.adma@gmail.com
+</footer>
+
+<script>
+let state = { sector:'', needs:[], stage:'' };
+
+// ── CHIPS POR SECTOR ──────────────────────────────────────────
+const sectorChips = {
+  agua:      { title:'¿Qué necesitas resolver en tu proyecto hídrico?', chips:[
+    { icon:'🎯', label:'Localizar acuíferos para perforación de pozos' },
+    { icon:'📏', label:'Determinar profundidad del nivel freático' },
+    { icon:'🔄', label:'Delimitar zonas de recarga' },
+    { icon:'⚠️', label:'Identificar contaminación en acuífero' },
+    { icon:'📋', label:'Estudio para concesión de agua (CONAGUA)' }
+  ]},
+  mineria:   { title:'¿Qué necesitas en tu proyecto minero?', chips:[
+    { icon:'🗺️', label:'Delimitar cuerpos minerales en profundidad' },
+    { icon:'💧', label:'Detectar agua subterránea en zona de explotación' },
+    { icon:'🔀', label:'Caracterizar fallas y fracturas del macizo' },
+    { icon:'🕳️', label:'Identificar zonas de subsidencia o colapso' }
+  ]},
+  civil:     { title:'¿Qué necesitas para tu obra?', chips:[
+    { icon:'🔬', label:'Caracterizar el subsuelo antes de construir' },
+    { icon:'🪨', label:'Localizar roca competente para cimentación' },
+    { icon:'🕳️', label:'Detectar cavidades o zonas de riesgo' },
+    { icon:'🏞️', label:'Estudio de sitio para presa o cortina' }
+  ]},
+  ambiental: { title:'¿Qué necesitas resolver ambientalmente?', chips:[
+    { icon:'☣️', label:'Delimitar pluma de contaminación en suelo o agua' },
+    { icon:'🧪', label:'Caracterizar sitio para remediación' },
+    { icon:'🛡️', label:'Verificar impermeabilidad de celda de relleno sanitario' },
+    { icon:'📊', label:'Monitoreo post-remediación' },
+    { icon:'🛢️', label:'Detectar fugas de hidrocarburos' }
+  ]},
+  energia:   { title:'¿Qué necesitas para tu proyecto de energía?', chips:[
+    { icon:'⚡', label:'Estudio de resistividad para sistema de tierra eléctrica' },
+    { icon:'💧', label:'Localizar agua subterránea para uso industrial' },
+    { icon:'🔬', label:'Caracterizar subsuelo para cimentación de estructuras' },
+    { icon:'♻️', label:'Evaluar sitio para disposición de residuos' }
+  ]},
+  agro:      { title:'¿Qué necesitas para tu proyecto agro o municipal?', chips:[
+    { icon:'💧', label:'Localizar agua para riego o dotación comunitaria' },
+    { icon:'🎯', label:'Definir sitio y profundidad de pozo ejidal' },
+    { icon:'📋', label:'Cumplir requisito técnico de dependencia gubernamental' }
+  ]}
+};
+
+// ── RESPUESTAS POR NECESIDAD ──────────────────────────────────
+const needResponses = {
+  'Localizar acuíferos para perforación de pozos': {
+    svc:'SEV',
+    que:'Medimos resistividades del subsuelo para identificar horizontes saturados y orientar el sitio de perforación, reduciendo significativamente el riesgo de perforar en zonas sin potencial hídrico.',
+    beneficio:'Perforación orientada a datos, no a suposiciones.',
+    etapas:{
+      exploracion:'Indica si el sitio tiene condiciones geoeléctricas favorables antes de comprometer inversión en perforación.',
+      diseno:'El modelo geoléctrico orienta la profundidad probable como insumo para la planeación del pozo.',
+      construccion:'Permite contrastar el modelo previo con las condiciones encontradas durante la ejecución.',
+      regulatorio:'El informe SEV aporta la caracterización geoeléctrica requerida como soporte técnico ante CONAGUA.'
+    }
+  },
+  'Determinar profundidad del nivel freático': {
+    svc:'SEV',
+    que:'El contraste de resistividades entre zona saturada y no saturada permite inferir la posición del nivel freático, reduciendo la incertidumbre al planear una perforación.',
+    beneficio:'Estimación orientadora de profundidad antes de iniciar trabajos.',
+    etapas:{
+      exploracion:'Genera una estimación de la profundidad probable del nivel freático como referencia técnica previa.',
+      diseno:'La profundidad inferida es insumo de referencia para la planeación del pozo.',
+      construccion:'Permite contrastar el modelo con las condiciones reales durante la ejecución.',
+      regulatorio:'Puede integrarse como dato de referencia en estudios hidrogeológicos para trámites hídricos.'
+    }
+  },
+  'Delimitar zonas de recarga': {
+    svc:'SEV + Geología',
+    que:'El mapeo geológico-estructural y el SEV identifican litologías permeables y fracturas en profundidad, reduciendo el riesgo de delimitar zonas de recarga incorrectas.',
+    beneficio:'Delimitas zonas con mayor potencial de recarga con base en datos de campo.',
+    etapas:{
+      exploracion:'Identifica qué zonas presentan condiciones geológicas y geoeléctricas favorables para la infiltración.',
+      diseno:'Informa restricciones de uso de suelo en proyectos que puedan afectar la recarga del acuífero.',
+      construccion:'Permite verificar si las obras activas están dentro de zonas identificadas como de recarga.',
+      regulatorio:'Aporta el componente geológico-geofísico requerido en evaluaciones de impacto a acuífero.'
+    }
+  },
+  'Identificar contaminación en acuífero': {
+    svc:'SEV',
+    que:'Los contaminantes iónicos modifican la resistividad del agua; el SEV traza la extensión probable de la anomalía, reduciendo el área de incertidumbre antes de instalar pozos de monitoreo.',
+    beneficio:'Orientas la red de monitoreo con información geofísica previa.',
+    etapas:{
+      exploracion:'Detecta anomalías resistivas que sugieren alteración en el subsuelo como diagnóstico previo.',
+      diseno:'Delimita el área de probable afectación para orientar el plan de monitoreo y muestreo.',
+      construccion:'Permite seguimiento espacial de la anomalía durante obras de contención.',
+      regulatorio:'El informe geoeléctrico puede integrarse como evidencia técnica complementaria ante CONAGUA o PROFEPA.'
+    }
+  },
+  'Estudio para concesión de agua (CONAGUA)': {
+    svc:'SEV + Geología',
+    que:'Realizamos mapeo geológico más SEV para generar el estudio hidrogeológico con el contenido que CONAGUA requiere como soporte técnico del trámite.',
+    beneficio:'Expediente con respaldo geológico y geofísico para el trámite.',
+    etapas:{
+      exploracion:'No aplica — el trámite requiere sitio y uso de agua definidos.',
+      diseno:'El SEV y el estudio geológico generan los parámetros del subsuelo para la memoria técnica.',
+      construccion:'Si el pozo ya existe, el estudio puede elaborarse para regularización del título.',
+      regulatorio:'Entregamos el estudio con el contenido que CONAGUA requiere como soporte técnico.'
+    }
+  },
+  'Delimitar cuerpos minerales en profundidad': {
+    svc:'SEV + Geología',
+    que:'El mapeo geológico-minero en superficie y el SEV en profundidad generan un modelo previo que reduce significativamente el riesgo de perforar fuera de la zona mineralizada.',
+    beneficio:'Orientas la perforación exploratoria con un modelo previo, no solo con información de superficie.',
+    etapas:{
+      exploracion:'Genera un modelo geoeléctrico con contrastes compatibles con mineralización antes de la perforación diamantina.',
+      diseno:'El modelo geoléctrico es insumo para el diseño de la malla de barrenación.',
+      construccion:'Permite verificar si las anomalías son consistentes con lo encontrado durante la explotación.',
+      regulatorio:'Puede aportar información geofísica de soporte en informes técnicos para concesión minera.'
+    }
+  },
+  'Detectar agua subterránea en zona de explotación': {
+    svc:'SEV',
+    que:'El SEV localiza zonas con resistividades bajas compatibles con niveles saturados o fracturas, reduciendo significativamente el riesgo de una inundación no anticipada en la explotación.',
+    beneficio:'Anticipas zonas de riesgo hídrico antes de avanzar en la explotación.',
+    etapas:{
+      exploracion:'Identifica zonas con anomalías que sugieren presencia de agua antes de comprometer infraestructura.',
+      diseno:'Orienta la ubicación de obras de drenaje o bombeo como referencia previa.',
+      construccion:'Permite identificar zonas de riesgo inmediato antes de avanzar con las labores.',
+      regulatorio:'Puede integrarse en el plan de manejo de agua requerido por la autoridad minera.'
+    }
+  },
+  'Caracterizar fallas y fracturas del macizo': {
+    svc:'SEV + Geología',
+    que:'El mapeo estructural en superficie y el SEV en profundidad reducen significativamente la incertidumbre sobre discontinuidades del macizo antes de planear labores o accesos.',
+    beneficio:'Reduces el riesgo de encontrar condiciones estructurales inesperadas en profundidad.',
+    etapas:{
+      exploracion:'Define zonas estructuralmente complejas antes de planear accesos o labores.',
+      diseno:'El modelo geológico-geofísico es insumo orientador para el equipo de ingeniería.',
+      construccion:'Permite contrastar las estructuras mapeadas con las encontradas durante la excavación.',
+      regulatorio:'Componente del informe geológico que puede requerirse para permisos de explotación.'
+    }
+  },
+  'Identificar zonas de subsidencia o colapso': {
+    svc:'SEV + Geología',
+    que:'El SEV detecta anomalías compatibles con cavidades o materiales blandos y la geología orienta su origen, reduciendo el riesgo de instalar infraestructura sobre zonas inestables no identificadas.',
+    beneficio:'Delimitas zonas de riesgo potencial antes de comprometer el sitio.',
+    etapas:{
+      exploracion:'Detecta anomalías subsuperficiales que sugieren irregularidades como diagnóstico previo.',
+      diseno:'Define zonas que requieren atención especial antes del proyecto ejecutivo.',
+      construccion:'Permite acotar la extensión de una anomalía detectada durante la obra.',
+      regulatorio:'Puede integrarse como soporte técnico en evaluaciones de riesgo geológico.'
+    }
+  },
+  'Caracterizar el subsuelo antes de construir': {
+    svc:'SEV',
+    que:'El SEV diferencia materiales blandos, zonas saturadas y roca en profundidad, reduciendo la incertidumbre del subsuelo antes de tomar decisiones de cimentación.',
+    beneficio:'El diseñador dispone de información del subsuelo antes de definir el tipo de cimentación.',
+    etapas:{
+      exploracion:'Aporta un perfil geoeléctrico del subsuelo que orienta la viabilidad del sitio.',
+      diseno:'El modelo geoléctrico es insumo complementario al estudio geotécnico para el diseño.',
+      construccion:'Permite contrastar el modelo previo con las condiciones reales en excavación.',
+      regulatorio:'Puede complementar el estudio de mecánica de suelos exigido por dependencias.'
+    }
+  },
+  'Localizar roca competente para cimentación': {
+    svc:'SEV',
+    que:'La roca sana presenta resistividades altas y diferenciadas; el SEV estima su profundidad probable y continuidad lateral, reduciendo el riesgo de subestimar la longitud de pilotes.',
+    beneficio:'Estimación de profundidad previa antes de ejecutar sondeos geotécnicos.',
+    etapas:{
+      exploracion:'Indica la profundidad probable de roca con alta resistividad como referencia previa.',
+      diseno:'La profundidad inferida es insumo complementario al estudio de mecánica de suelos.',
+      construccion:'Permite contrastar lo encontrado en excavación con el modelo geoléctrico previo.',
+      regulatorio:'Puede incluirse como soporte técnico complementario en la memoria de cálculo.'
+    }
+  },
+  'Detectar cavidades o zonas de riesgo': {
+    svc:'SEV',
+    que:'Las cavidades generan anomalías resistivas características; el SEV indica su presencia y profundidad aproximada, reduciendo el riesgo de comprometer un sitio con irregularidades subsuperficiales no identificadas.',
+    beneficio:'Información previa sobre posibles anomalías antes de comprometer el sitio.',
+    etapas:{
+      exploracion:'Detecta zonas anómalas compatibles con cavidades como diagnóstico previo.',
+      diseno:'Delimita zonas que deben investigarse con mayor detalle antes del proyecto ejecutivo.',
+      construccion:'Permite acotar la extensión de una anomalía detectada durante la excavación.',
+      regulatorio:'Puede integrarse en evaluaciones de riesgo geológico requeridas por algunos municipios.'
+    }
+  },
+  'Estudio de sitio para presa o cortina': {
+    svc:'SEV + Geología',
+    que:'El mapeo geológico y el SEV caracterizan litología, permeabilidad inferida y posición del nivel freático, reduciendo el riesgo de seleccionar un sitio con condiciones geológicas desfavorables.',
+    beneficio:'El sitio cuenta con caracterización geológica-geofísica desde la etapa de factibilidad.',
+    etapas:{
+      exploracion:'Aporta evaluación geológica y geoeléctrica preliminar antes de invertir en ingeniería.',
+      diseno:'El modelo geológico-geofísico es insumo para el equipo de ingeniería de la obra.',
+      construccion:'Permite contrastar las condiciones del subsuelo con el modelo generado en la etapa previa.',
+      regulatorio:'El estudio puede ser componente requerido en trámites de concesión de agua superficial.'
+    }
+  },
+  'Delimitar pluma de contaminación en suelo o agua': {
+    svc:'SEV',
+    que:'Los contaminantes disueltos modifican la resistividad del suelo y agua; el SEV traza la extensión probable de la pluma, reduciendo el área de incertidumbre antes de instalar pozos de monitoreo.',
+    beneficio:'Orientas la red de monitoreo con información geofísica previa.',
+    etapas:{
+      exploracion:'Identifica anomalías compatibles con contaminación como diagnóstico previo al muestreo.',
+      diseno:'Define el área de probable afectación para orientar la red de monitoreo.',
+      construccion:'Permite dar seguimiento a la anomalía resistiva durante obras de contención.',
+      regulatorio:'El informe geoeléctrico puede integrarse como soporte técnico ante PROFEPA o SEMARNAT.'
+    }
+  },
+  'Caracterizar sitio para remediación': {
+    svc:'SEV + Geología',
+    que:'La geología determina tipo de suelo y vías de migración; el SEV mapea anomalías en profundidad — juntos reducen la incertidumbre del modelo conceptual del sitio antes de diseñar la intervención.',
+    beneficio:'El equipo de remediación dispone de un modelo conceptual para orientar su estrategia.',
+    etapas:{
+      exploracion:'Genera el modelo conceptual inicial del sitio como base para la planeación.',
+      diseno:'El modelo geológico-geofísico es insumo de referencia para el diseño del sistema de remediación.',
+      construccion:'Permite verificar si las condiciones del subsuelo son consistentes con el modelo durante la intervención.',
+      regulatorio:'El estudio puede ser componente del informe de caracterización requerido por la normativa ambiental.'
+    }
+  },
+  'Verificar impermeabilidad de celda de relleno sanitario': {
+    svc:'SEV',
+    que:'El SEV detecta zonas con características de alta permeabilidad —fracturas, gravas— en el subsuelo bajo la celda, reduciendo el riesgo de autorizar un sitio con condiciones desfavorables no visibles.',
+    beneficio:'Información geoeléctrica del subsuelo para evaluar la aptitud del sitio.',
+    etapas:{
+      exploracion:'Evalúa si el subsuelo presenta condiciones compatibles con impermeabilidad natural.',
+      diseno:'Orienta las zonas donde puede requerirse impermeabilización adicional.',
+      construccion:'Permite verificar las condiciones del subsuelo antes de instalar la celda.',
+      regulatorio:'El informe SEV puede integrarse como soporte técnico en el expediente ante SEMARNAT.'
+    }
+  },
+  'Monitoreo post-remediación': {
+    svc:'SEV',
+    que:'Campañas repetidas de SEV en los mismos puntos detectan cambios de resistividad en el tiempo, reduciendo la incertidumbre sobre el avance real de la remediación.',
+    beneficio:'Indicador geofísico del comportamiento del subsuelo a lo largo del tiempo.',
+    etapas:{
+      exploracion:'No aplica en esta etapa.',
+      diseno:'Define los puntos de medición y la línea base de resistividades antes de iniciar la remediación.',
+      construccion:'Campañas periódicas permiten detectar cambios durante la remediación activa.',
+      regulatorio:'Los resultados pueden integrarse como soporte técnico en reportes ante la autoridad ambiental.'
+    }
+  },
+  'Detectar fugas de hidrocarburos': {
+    svc:'SEV',
+    que:'Los hidrocarburos libres presentan resistividades muy altas; el SEV delimita esas anomalías en el subsuelo, reduciendo el área de incertidumbre antes de iniciar la investigación de sitio.',
+    beneficio:'Orientas la investigación con información geoeléctrica previa.',
+    etapas:{
+      exploracion:'Detecta anomalías resistivas compatibles con hidrocarburos como diagnóstico previo al muestreo.',
+      diseno:'Delimita el área de probable afectación para orientar el programa de muestreo.',
+      construccion:'Permite acotar la zona de excavación con información geofísica previa.',
+      regulatorio:'El informe geoeléctrico puede integrarse como soporte técnico en el expediente de pasivo ambiental.'
+    }
+  },
+  'Estudio de resistividad para sistema de tierra eléctrica': {
+    svc:'SEV',
+    que:'El SEV obtiene el modelo de resistividades por capas del suelo — el insumo directo para calcular el sistema de puesta a tierra conforme a norma, eliminando la incertidumbre de usar valores supuestos.',
+    beneficio:'El sistema de tierra se calcula con resistividades medidas en campo.',
+    etapas:{
+      exploracion:'Evalúa si la resistividad del suelo es compatible con los requerimientos del sistema proyectado.',
+      diseno:'El modelo de resistividades es el insumo directo para el cálculo del sistema de tierra.',
+      construccion:'Permite verificar que el terreno donde se instala el sistema corresponde al caracterizado.',
+      regulatorio:'El informe de resistividades es requisito técnico de NOM-001-SEDE para instalaciones que demandan puesta a tierra.'
+    }
+  },
+  'Localizar agua subterránea para uso industrial': {
+    svc:'SEV',
+    que:'El SEV identifica horizontes saturados y estima su profundidad y espesor probable, reduciendo el riesgo de perforar en zonas sin aptitud hídrica cerca de la instalación.',
+    beneficio:'Información del subsuelo para decidir dónde y si vale la pena perforar.',
+    etapas:{
+      exploracion:'Indica si el sitio presenta condiciones favorables para un acuífero como referencia previa.',
+      diseno:'La profundidad inferida es referencia para la planeación; el perforador define parámetros con base en campo.',
+      construccion:'Permite contrastar el modelo previo con las condiciones encontradas durante la perforación.',
+      regulatorio:'El informe SEV puede integrarse como soporte técnico en la solicitud de concesión ante CONAGUA.'
+    }
+  },
+  'Caracterizar subsuelo para cimentación de estructuras': {
+    svc:'SEV',
+    que:'El SEV perfila el subsuelo diferenciando zonas blandas, saturadas y roca, reduciendo la incertidumbre antes de definir el programa geotécnico.',
+    beneficio:'El equipo de diseño dispone de información del subsuelo antes de ejecutar sondeos geotécnicos.',
+    etapas:{
+      exploracion:'Aporta un perfil geoeléctrico preliminar del sitio como referencia previa.',
+      diseno:'El modelo geoléctrico es insumo complementario al estudio geotécnico para el diseño de cimentación.',
+      construccion:'Permite contrastar las condiciones en excavación con el modelo previo.',
+      regulatorio:'Puede complementar el expediente técnico que exigen algunas dependencias para aprobación de proyecto.'
+    }
+  },
+  'Evaluar sitio para disposición de residuos': {
+    svc:'SEV + Geología',
+    que:'La geología y el SEV caracterizan la litología, permeabilidad probable y profundidad del nivel freático, reduciendo el riesgo de seleccionar un sitio con condiciones desfavorables para confinamiento.',
+    beneficio:'El sitio cuenta con caracterización geológica-geofísica preliminar para la evaluación de aptitud.',
+    etapas:{
+      exploracion:'Evalúa si el sitio presenta condiciones compatibles con los requerimientos de impermeabilidad.',
+      diseno:'El modelo orienta las decisiones de impermeabilización adicional.',
+      construccion:'Permite verificar las condiciones del subsuelo antes de instalar la celda.',
+      regulatorio:'El estudio puede integrarse como soporte técnico en el expediente ante SEMARNAT conforme a NOM-083.'
+    }
+  },
+  'Localizar agua para riego o dotación comunitaria': {
+    svc:'SEV',
+    que:'El SEV identifica horizontes saturados y estima profundidad y espesor del acuífero probable, reduciendo significativamente el riesgo de perforar en zonas sin aptitud hídrica.',
+    beneficio:'Reduces el riesgo de invertir en perforación sin información previa del subsuelo.',
+    etapas:{
+      exploracion:'Indica si el sitio presenta condiciones geoeléctricas favorables antes de tramitar permisos.',
+      diseno:'La profundidad inferida es referencia para la planeación del pozo.',
+      construccion:'Permite contrastar el modelo con las condiciones reales durante la perforación.',
+      regulatorio:'El informe SEV puede integrarse como soporte técnico en la solicitud de concesión ante CONAGUA.'
+    }
+  },
+  'Definir sitio y profundidad de pozo ejidal': {
+    svc:'SEV',
+    que:'El SEV compara sitios candidatos en términos geoléctricos e indica cuál presenta mejores condiciones y a qué profundidad probable, reduciendo el riesgo de elegir un sitio desfavorable.',
+    beneficio:'Criterio técnico geofísico para decidir dónde perforar.',
+    etapas:{
+      exploracion:'Compara sitios candidatos geoléctricos antes de comprometer inversión en perforación.',
+      diseno:'La profundidad estimada orienta la planeación; los parámetros del pozo se definen durante la perforación.',
+      construccion:'Permite guiar al perforador con el modelo previo como referencia.',
+      regulatorio:'El informe SEV es el documento técnico que CONAGUA requiere como soporte para el permiso de perforación.'
+    }
+  },
+  'Cumplir requisito técnico de dependencia gubernamental': {
+    svc:'SEV + Geología',
+    que:'Realizamos el SEV y la investigación geológica requeridos y entregamos el informe con el contenido y formato que exige la dependencia — CONAGUA, SEMARNAT, SAPAS u otra.',
+    beneficio:'El trámite cuenta con el soporte técnico geológico-geofísico que la dependencia exige.',
+    etapas:{
+      exploracion:'Identifica qué estudios específicos requiere la dependencia antes de iniciar el trámite.',
+      diseno:'El estudio se diseña conforme a los términos de referencia del trámite correspondiente.',
+      construccion:'Si el proyecto ya avanzó, el estudio puede elaborarse para regularización o cumplimiento posterior.',
+      regulatorio:'Entregamos el informe con el contenido técnico que la dependencia requiere como soporte del trámite.'
+    }
+  }
+};
+
+const sectorMeta = {
+  agua:      { icon:'💧', name:'Agua y Recursos Hídricos' },
+  mineria:   { icon:'⛏️', name:'Minería' },
+  civil:     { icon:'🏗️', name:'Obra Civil y Geotecnia' },
+  ambiental: { icon:'🌿', name:'Ambiental' },
+  energia:   { icon:'⚡', name:'Energía e Industria' },
+  agro:      { icon:'🌾', name:'Agropecuario / Municipal' }
+};
+
+const stageNames = {
+  exploracion:  'Exploración inicial',
+  diseno:       'Diseño / Ingeniería',
+  construccion: 'Construcción',
+  regulatorio:  'Cumplimiento regulatorio'
+};
+
+// ── PROGRESO ───────────────────────────────────────────────────
+function setProgress(pct){ document.getElementById('progressFill').style.width = pct+'%'; }
+
+// ── PASO 1: SECTOR ─────────────────────────────────────────────
+function selectSector(sector){
+  state.sector = sector;
+  state.needs  = [];
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('cat-'+sector).classList.add('selected');
+
+  const data = sectorChips[sector];
+  document.getElementById('step2Title').textContent = data.title;
+  const c = document.getElementById('chipsContainer');
+  c.innerHTML = '';
+  data.chips.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.innerHTML = `<span class="chip-icon">${item.icon}</span><span>${item.label}</span>`;
+    btn.onclick = () => toggleChip(btn, item.label);
+    c.appendChild(btn);
+  });
+  document.getElementById('btnContinue').classList.add('hidden');
+
+  showStep('step2');
+  setProgress(35);
+}
+
+// ── PASO 2: NECESIDAD ──────────────────────────────────────────
+function toggleChip(btn, label){
+  if(btn.classList.contains('selected')){
+    btn.classList.remove('selected');
+    state.needs = state.needs.filter(n => n !== label);
+  } else {
+    btn.classList.add('selected');
+    state.needs.push(label);
+  }
+  const cont = document.getElementById('btnContinue');
+  cont.classList.toggle('hidden', state.needs.length === 0);
+}
+
+function goToStep3(){
+  showStep('step3');
+  setProgress(68);
+}
+
+// ── PASO 3: ETAPA ──────────────────────────────────────────────
+function selectStage(stage){
+  state.stage = stage;
+  buildResult();
+  setProgress(100);
+  // ocultar paso 3 y mostrar resultado
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('solutionCard').classList.remove('hidden');
+  document.getElementById('admaCard').classList.remove('hidden');
+  document.getElementById('ctaSection').classList.remove('hidden');
+  window.scrollTo({ top: document.getElementById('solutionCard').offsetTop - 20, behavior:'smooth' });
+}
+
+// ── RESULTADO ─────────────────────────────────────────────────
+function buildResult(){
+  const meta  = sectorMeta[state.sector];
+  const stage = state.stage;
+
+  document.getElementById('solIcon').textContent      = meta.icon;
+  document.getElementById('solSectorName').textContent= meta.name;
+  document.getElementById('solStageBadge').textContent= stageNames[stage];
+
+  // bloques de necesidad
+  const container = document.getElementById('needBlocks');
+  container.innerHTML = '';
+
+  state.needs.forEach((need, i) => {
+    const r = needResponses[need];
+    if(!r) return;
+    const isGeo = r.svc.includes('+');
+    const badgeCls = isGeo ? 'svc-geo' : 'svc-sev';
+    const etapaTxt = r.etapas[stage] || '';
+    const id = 'nb'+i;
+
+    const block = document.createElement('div');
+    block.className = 'need-block' + (i===0 ? ' open' : '');
+    block.id = id;
+    block.innerHTML = `
+      <div class="need-block-header" onclick="toggleBlock('${id}')">
+        <span class="need-block-title">${need}</span>
+        <span class="svc-badge ${badgeCls}">${r.svc}</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="need-block-body">
+        <p class="need-que">${r.que}</p>
+        ${etapaTxt ? `<div class="need-etapa"><strong>En tu etapa · ${stageNames[stage]}</strong>${etapaTxt}</div>` : ''}
+        <div class="need-beneficio"><strong>Resultado:</strong> ${r.beneficio}</div>
+      </div>`;
+    container.appendChild(block);
+  });
+
+  // WhatsApp
+  const msg = encodeURIComponent(
+    `Hola ADMA GEO, acabo de hacer su diagnóstico en línea.\n\n`+
+    `*Sector:* ${meta.name}\n`+
+    `*Necesidades:* ${state.needs.join(', ')}\n`+
+    `*Etapa:* ${stageNames[stage]}\n\n`+
+    `Me gustaría recibir más información y cotización.`
+  );
+  document.getElementById('whatsappBtn').href = `https://wa.me/524501150638?text=${msg}`;
+}
+
+function toggleBlock(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── NAVEGACIÓN ────────────────────────────────────────────────
+function showStep(stepId){
+  ['step1','step2','step3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.add('hidden'); el.classList.remove('active');
+  });
+  ['solutionCard','admaCard','ctaSection'].forEach(id =>
+    document.getElementById(id).classList.add('hidden')
+  );
+  const target = document.getElementById(stepId);
+  target.classList.remove('hidden'); target.classList.add('active','fade-in');
+  window.scrollTo({ top: target.offsetTop - 20, behavior:'smooth' });
+}
+
+function goBack(toStep){
+  if(toStep===1){ showStep('step1'); setProgress(5); }
+  if(toStep===2){ showStep('step2'); setProgress(35); }
+  if(toStep===3){
+    document.getElementById('solutionCard').classList.add('hidden');
+    document.getElementById('admaCard').classList.add('hidden');
+    document.getElementById('ctaSection').classList.add('hidden');
+    showStep('step3'); setProgress(68);
+  }
+}
+
+function resetAll(){
+  state = { sector:'', needs:[], stage:'' };
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  showStep('step1'); setProgress(5);
+}
+</script>
+</body>
+</html>
